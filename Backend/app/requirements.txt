@@ -1,0 +1,9 @@
+flask
+flask-cors
+google-generativeai
+google-genai
+python-dotenv
+grpcio
+gunicorn
+gevent
+flask_socketio
