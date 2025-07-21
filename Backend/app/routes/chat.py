@@ -1,12 +1,18 @@
 # app/routes/chat.py
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 
 import uuid
-from app.services.gemini_service import GeminiService
+from ..services import gemini_service
 from app.repositories.session_repo import create_session, get_session_by_id, update_session
 
 chat_bp = Blueprint('chat', __name__)
-gemini_service = GeminiService()
+
+
+@chat_bp.route('/', methods=['GET'])
+def index():
+    """Serve the single-page UI or landing page."""
+    # `templates/index2.html` already exists in the project.
+    return render_template('index2.html')
 
 
 @chat_bp.route('/api/sessions', methods=['POST'])
@@ -47,7 +53,11 @@ def send_message():
         session = get_session_by_id(session_id)
 
     try:
-        response = gemini_service.send_message(session_id, message)
+        # You may need to start a session if not already started
+        chat = gemini_service.get_session(session_id)
+        if not chat:
+            chat = gemini_service.start_session(session_id)
+        response = chat.send_message(message)
         update_session(session_id, {})  # This will update the updated_at timestamp
         return jsonify({
             'response': response.text,

@@ -1,7 +1,7 @@
 import google.generativeai as genai
 import json
 import os
-from config import Config
+from app.config import Config
 
 # Load system instructions from file
 if not os.path.exists(Config.INSTRUCTIONS_PATH):
